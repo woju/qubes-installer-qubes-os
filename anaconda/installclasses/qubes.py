@@ -85,6 +85,16 @@ class InstallClass(BaseInstallClass):
         anaconda.dispatch.skipStep("tasksel")
         anaconda.dispatch.skipStep("group-selection")
 
+    def postAction(self, anaconda):
+        # First disable  all the services...
+        whitelisted = ['functions', 'killall', 'halt', 'single',
+                'rsyslog', 'haldaemon', 'messagebus', 'xenstored', 'xend', 'xenconsoled']
+
+        for file in os.listdir('/etc/init.d'):
+            if not file in whitelisted:
+                subprocess.check_call(['/usr/sbin/chroot', anaconda.rootPath,
+                    '/sbin/chkconfig', file, 'off'])
+
     def getBackend(self):
         if flags.livecdInstall:
             import livecd
