@@ -5,7 +5,7 @@
 Summary:	Qubes release files
 Name:		qubes-release
 Version:	1
-Release:	4
+Release:	5
 License:	GPLv2
 Group:		System Environment/Base
 Source:		%{name}-%{version}.tar.bz2
@@ -75,8 +75,12 @@ EOF
 # On Mar 31, 2012, the Qubes signing key has changed
 # The new key is brought by this RPM, but we also
 # need to explicitly import it to RPM DB
+
+# Also add new signing key for Qubes R2 to allow
+# for easy R1->R2 upgrade
 if [ $1 -gt 1 ]; then
     rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-1-primary
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-2-primary
 fi
 
 
