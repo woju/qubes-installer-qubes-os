@@ -79,8 +79,9 @@ EOF
 # Also add new signing key for Qubes R2 to allow
 # for easy R1->R2 upgrade
 if [ $1 -gt 1 ]; then
-    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-1-primary
-    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-2-primary
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-1-primary 2> /dev/null
+    rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-2-primary 2> /dev/null
+    true
 fi
 
 
