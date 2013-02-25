@@ -1,0 +1,43 @@
+#!/bin/sh
+
+QUBES_VERREL=`rpm -q --qf "%{VERSION}0%{RELEASE}"`
+if [ "$QUBES_VERREL" -ge 203 ]; then
+    echo "Your system is already upgraded to latest version supported by this tool"
+    exit 0
+fi
+
+if [ "`id -u`" != "0" ]; then
+    echo "ERROR: This tool must be started by root"
+fi
+
+if [ -L /lib ]; then
+    # Stage 1 completed, continue with stage2
+    /usr/libexec/qubes-dist-upgrade/upgrade-stage2.sh
+    exit $?
+fi
+
+# stage1
+
+echo "This tool will upgrade your Qubes R1 system to Qubes R2."
+
+echo "Remember that preferred way is to backup data (using qvm-backup tool or"
+echo "Qubes Manager), reinstall the system and restore data."
+echo ""
+echo "This tool will only work if you have standard installation, especially if you"
+echo "haven't manually modified bootloader settings. Otherwise upgrade would"
+echo "fail and you should go with reinstall."
+echo ""
+echo "In any case ensure you have backed up all your data!"
+echo ""
+
+echo -n "Do you want continue? [y/N] "
+
+read response
+
+if [ "$response" != "y" ]; then
+    echo "Aborting!"
+    exit 1
+fi
+
+/usr/libexec/qubes-dist-upgrade/upgrade-stage1.sh
+exit $?

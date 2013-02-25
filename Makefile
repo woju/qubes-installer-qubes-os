@@ -31,6 +31,7 @@ package = $(shell \
 	tar jcf $(1)-$(2).tar.bz2 --dereference --exclude-vcs $(1)-$(2); \
 	rm $(1)-$(2) )
 
+UPGRADE_VERSION := $(call spec_version,qubes-dist-upgrade/qubes-dist-upgrade.spec)
 ANACONDA_VERSION := $(call spec_version,anaconda/anaconda.spec)
 FIRSTBOOT_VERSION := $(call spec_version,firstboot/firstboot.spec)
 QBSLOGOS_VERSION := $(call spec_version,qubes-logos/qubes-logos.spec)
@@ -71,6 +72,9 @@ rpm/SOURCES/firstboot-$(FIRSTBOOT_VERSION).tar.bz2: firstboot firstboot/firstboo
 rpm/SOURCES/qubes-logos-$(QBSLOGOS_VERSION).tar.bz2: qubes-logos qubes-logos/qubes-logos.spec
 	$(call package,qubes-logos,$(QBSLOGOS_VERSION))
 
+rpm/SOURCES/qubes-dist-upgrade-$(UPGRADE_VERSION).tar.bz2: qubes-dist-upgrade qubes-dist-upgrade/qubes-dist-upgrade.spec
+	$(call package,qubes-dist-upgrade,$(UPGRADE_VERSION))
+
 rpm/SOURCES/qubes-release-$(QBSRELEASE_VERSION).tar.bz2: qubes-release qubes-release/qubes-release.spec
 	$(call package,qubes-release,$(QBSRELEASE_VERSION))
 
@@ -88,6 +92,9 @@ rpms_release: rpm/SOURCES/qubes-release-$(QBSRELEASE_VERSION).tar.bz2
 
 rpms_revisor: revisor/revisor-$(REVISOR_VERSION).tar.gz revisor/revisor.spec
 	rpmbuild --define "_rpmdir rpm/" --define "_sourcedir $(TOP)/revisor" -bb revisor/revisor.spec
+
+rpms_upgrade: rpm/SOURCES/qubes-dist-upgrade-$(UPGRADE_VERSION).tar.bz2
+	rpmbuild $(RPMBUILD_DEFINES) -bb qubes-dist-upgrade/qubes-dist-upgrade.spec
 
 RPMS = rpm/noarch/qubes-logos-$(QBSLOGOS_VERSION)-*.rpm \
 	rpm/noarch/qubes-release-$(QBSRELEASE_VERSION)-*.rpm \

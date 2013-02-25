@@ -1,0 +1,6 @@
+[qubes-upgrade]
+name=Qubes dist upgrade repo R1->R2
+baseurl=http://yum.qubes-os.org/r1/current/dom0-upgrade-r2
+gpgkey=file://etc/pki/rpm-gpg/RPM-GPG-KEY-qubes-1-primary
+gpgcheck=1
+enabled=0
