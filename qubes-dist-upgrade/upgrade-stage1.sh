@@ -8,7 +8,7 @@ export LC_ALL=C
 
 echo "--> Installing packages required for upgrade"
 qubes-dom0-update --disablerepo=* --enablerepo=qubes-upgrade $YUM_OPTS qubes-dom0-upgrade-packages-placeholder
-yum -y remove PackageKit-yum
+yum $YUM_OPTS remove PackageKit-yum
 qubes-dom0-update --disablerepo=* --enablerepo=qubes-upgrade $YUM_OPTS rpm libdb-utils
 rm -f /var/lib/rpm/__*
 rpm --rebuilddb

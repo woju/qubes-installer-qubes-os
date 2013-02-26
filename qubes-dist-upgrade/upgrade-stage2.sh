@@ -29,11 +29,6 @@ yum $YUM_OPTS remove pyxf86config
 echo "--> Switching to new release"
 qubes-dom0-update --releasever=2 $YUM_OPTS qubes-release
 
-#echo "--> Upgrading/removing problematic packages"
-#rpm -e --nodeps kbd
-#qubes-dom0-update -y kbd kbd-misc
-#yum remove -y groff
-
 echo "--> Updating base system packages"
 qubes-dom0-update $YUM_OPTS yum kbd.x86_64 kbd-misc groff.x86_64 groff-base.x86_64 \
     dbus-glib.x86_64 dbus-libs.x86_64
