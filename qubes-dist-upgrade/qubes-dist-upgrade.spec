@@ -27,8 +27,6 @@ install qubes-dist-upgrade $RPM_BUILD_ROOT/usr/sbin/
 mkdir -p $RPM_BUILD_ROOT/usr/libexec/qubes-dist-upgrade
 install upgrade-stage1.sh $RPM_BUILD_ROOT/usr/libexec/qubes-dist-upgrade/
 install upgrade-stage2.sh $RPM_BUILD_ROOT/usr/libexec/qubes-dist-upgrade/
-mkdir -p $RPM_BUILD_ROOT/usr/share/qubes-dist-upgrade
-install rc.sysinit.patch $RPM_BUILD_ROOT/usr/share/qubes-dist-upgrade/
 mkdir -p $RPM_BUILD_ROOT/etc/yum.repos.d
 install -m 644 qubes-upgrade.repo $RPM_BUILD_ROOT/etc/yum.repos.d/
 
@@ -44,7 +42,6 @@ exit 0
 /usr/sbin/qubes-dist-upgrade
 /usr/libexec/qubes-dist-upgrade/upgrade-stage1.sh
 /usr/libexec/qubes-dist-upgrade/upgrade-stage2.sh
-/usr/share/qubes-dist-upgrade/rc.sysinit.patch
 /etc/yum.repos.d/qubes-upgrade.repo
 %dir /var/lib/qubes-dist-upgrade
 
