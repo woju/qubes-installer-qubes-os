@@ -31,7 +31,7 @@ qubes-dom0-update --releasever=2 $YUM_OPTS qubes-release
 
 echo "--> Updating base system packages"
 qubes-dom0-update $YUM_OPTS yum kbd.x86_64 kbd-misc groff.x86_64 groff-base.x86_64 \
-    dbus-glib.x86_64 dbus-libs.x86_64
+    dbus-glib.x86_64 dbus-libs.x86_64 dbus.x86_64 dbus-x11.x86_64
 rpm --rebuilddb
 
 echo "--> Updating all installed packages"
