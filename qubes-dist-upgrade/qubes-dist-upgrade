@@ -1,6 +1,6 @@
 #!/bin/sh
 
-QUBES_VERREL=`rpm -q --qf "%{VERSION}0%{RELEASE}"`
+QUBES_VERREL=`rpm -q --qf "%{VERSION}0%{RELEASE}" qubes-release`
 if [ "$QUBES_VERREL" -ge 203 ]; then
     echo "Your system is already upgraded to latest version supported by this tool"
     exit 0
