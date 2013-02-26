@@ -14,7 +14,7 @@ rm -f /var/lib/rpm/__*
 rpm --rebuilddb
 
 echo "--> Applying misc fixes"
-sed -i 's@find /var/lock /var/run@\0 -mindepth 1@' /etc/rc.d/rc.sysinit
+sed -i 's@find /var/lock /var/run@find /var/lock/ /var/run/ -mindepth 1@' /etc/rc.d/rc.sysinit
 
 echo "--> Preparing filesystem layout upgrade"
 
