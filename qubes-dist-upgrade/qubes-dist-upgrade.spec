@@ -32,10 +32,6 @@ install -m 644 qubes-upgrade.repo $RPM_BUILD_ROOT/etc/yum.repos.d/
 
 mkdir -p $RPM_BUILD_ROOT/var/lib/qubes-dist-upgrade
 
-%post
-rpm --import /usr/share/qubes-dist-upgrade/qubes-test.asc
-exit 0
-
 %files
 %defattr(-,root,root,-)
 /usr/share/dracut/modules.d/30convertfs
