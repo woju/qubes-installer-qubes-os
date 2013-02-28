@@ -1,5 +1,5 @@
 Name:		qubes-dist-upgrade
-Version:	0.1
+Version:	1.0
 Release:	1%{?dist}
 Summary:	Upgrade tool for Qubes dom0
 
