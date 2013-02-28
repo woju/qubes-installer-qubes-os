@@ -17,14 +17,16 @@ if [ -n "$GRUB_DEVICE" ]; then
     echo "GRUB_DEVICE=$GRUB_DEVICE" > /var/lib/qubes-dist-upgrade/grub
 fi
 
-if ! rpm -q kdelibs | grep -q fc18; then 
+if rpm -q kdelibs | grep -q fc13; then
     echo "--> Removing old KDE packages"
     yum $YUM_OPTS remove kdelibs kde-settings kde-filesystem kde-settings-kdm \
 	ksysguardd oxygen-icon-theme oxygen-cursor-themes
 fi
 
-echo "--> Removing other old packages"
-yum $YUM_OPTS remove pyxf86config
+if rpm -q pyxf86config > /dev/null; then
+    echo "--> Removing other old packages"
+    yum $YUM_OPTS remove pyxf86config
+fi
 
 echo "--> Switching to new release"
 qubes-dom0-update --releasever=2 $YUM_OPTS qubes-release
