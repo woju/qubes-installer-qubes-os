@@ -1156,6 +1156,7 @@
       <packagereq>gdb</packagereq>
       <packagereq>xen-debuginfo</packagereq>
       <packagereq>netplug</packagereq>
+      <packagereq>openssh-server</packagereq>
       <packagereq>qubes-core-dom0-debuginfo</packagereq>
       <packagereq>qubes-core-dom0-linux-debuginfo</packagereq>
       <packagereq>qubes-gui-dom0-debuginfo</packagereq>
