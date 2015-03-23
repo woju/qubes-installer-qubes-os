@@ -132,7 +132,7 @@ iso:
 	./rpm_verify work/$(ISO_VERSION)/x86_64/os/Packages/*/*.rpm
 	# Move result files to known-named directories
 	mkdir -p build/ISO/qubes-x86_64/iso build/work
-	mv work/$(ISO_VERSION)/x86_64/iso/*-DVD.iso build/ISO/qubes-x86_64/iso/
+	mv work/$(ISO_VERSION)/x86_64/iso/*-DVD*.iso build/ISO/qubes-x86_64/iso/
 	rm -rf build/work/$(ISO_VERSION)
 	mv work/$(ISO_VERSION)/x86_64/os build/work/$(ISO_VERSION)
 	chown --reference=Makefile -R build
