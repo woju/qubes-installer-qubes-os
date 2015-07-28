@@ -139,11 +139,11 @@ iso:
 	chown --reference=Makefile -R build yum
 	rm -rf work
 
-liveusb:
+liveusb: conf/liveusb.ks
 	ln -sf `pwd` /tmp/qubes-installer
 	createrepo -q -g ../../conf/comps-qubes.xml --update yum/qubes-dom0
 	mkdir -p work
-	pushd work && sudo livecd-creator --product='Qubes OS' --title="Qubes OS $(ISO_VERSION)" --config $(PWD)/conf/qubes-kickstart.cfg && popd
+	pushd work && sudo livecd-creator --verbose --debug --product='Qubes OS' --title="Qubes OS $(ISO_VERSION)" --config ../$< && popd
 #	./rpm_verify work/$(ISO_VERSION)/x86_64/os/Packages/*/*.rpm
 #	# Move result files to known-named directories
 #	mkdir -p build/ISO/qubes-x86_64/iso build/work
