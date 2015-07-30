@@ -215,6 +215,14 @@ def main():
 
     try:
         creator.mount(options.base_on, options.cachedir)
+
+        # fix /dev
+        os.mknod(os.path.join(
+            creator._instroot, 'dev/loop-control'), device=os.makedev(10, 237))
+        for i in range(8):
+            os.mknod(os.path.join(creator._instroot, 'dev/loop{}'.format(i)),
+                device=os.makedev(7, i))
+
         creator.install()
         creator.configure()
         if options.give_shell:
