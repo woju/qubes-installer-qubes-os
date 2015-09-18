@@ -6,6 +6,7 @@ RPM_SPEC_FILES := \
 	lorax-templates-qubes/lorax-templates-qubes.spec \
 	pungi/pungi.spec \
 	pykickstart/pykickstart.spec \
+	refind/refind.spec \
 	qubes-release/qubes-dom0-dist-upgrade.spec \
     livecd-tools/livecd-tools.spec \
     live/qubes-live.spec

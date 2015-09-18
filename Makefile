@@ -51,6 +51,12 @@ iso-prepare:
 	ln -nsf `pwd` /tmp/qubes-installer
 	createrepo -q -g ../../conf/comps-qubes.xml --update yum/qubes-dom0
 
+get-sources:
+	$(MAKE) -C refind get-sources
+
+verify-sources:
+	$(MAKE) -C refind verify-sources
+
 iso-installer: iso-prepare
 	mkdir -p work
 	pushd work && pungi --name=Qubes  $(PUNGI_OPTS) -c $(PWD)/conf/qubes-kickstart.cfg && popd
