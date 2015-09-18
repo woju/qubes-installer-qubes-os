@@ -8,30 +8,25 @@ APPLE_EFI_DISKNAME=inroot+"/usr/share/pixmaps/bootloader/fedora-media.vol"
 
 mkdir ${EFIBOOTDIR}
 mkdir ${EFIBOOTDIR}/fonts/
-install boot/efi/EFI/*/gcd${efiarch|lower}.efi ${EFIBOOTDIR}/BOOT${efiarch}.efi
-## keep also under original name to make mkefiboot --apple happy
-##install boot/efi/EFI/*/gcd${efiarch|lower}.efi ${EFIBOOTDIR}/grub${efiarch|lower}.efi
+install usr/share/refind/refind/refind_${efiarch|lower}.efi ${EFIBOOTDIR}/BOOT${efiarch}.efi
 install boot/efi/EFI/*/xen*.efi ${EFIBOOTDIR}/xen.efi
-
 
 # For Secure Boot restore those files (keep in mind 32MB limit on efiboot.img
 # imposed by ISO9660, details in #794):
 #install boot/efi/EFI/*/shim.efi ${EFIBOOTDIR}/BOOT${efiarch}.efi
-#install boot/efi/EFI/*/gcd${efiarch|lower}.efi ${EFIBOOTDIR}/grub${efiarch|lower}.efi
+## grubx64.efi name is compiled into shim.efi - you need to rebuild it to use
+##  different one; or pass it as command line argument (each time)
+#install boot/efi/EFI/*/refind_${efiarch|lower}.efi ${EFIBOOTDIR}/grub${efiarch|lower}.efi
 #install boot/efi/EFI/*/MokManager.efi ${EFIBOOTDIR}/
-
 
 ## actually make the EFI images
 ${make_efiboot("images/efiboot.img", include_kernel=True)}
-
-## place fonts on ISO9660, but not in efiboot.img to save space
-install boot/efi/EFI/*/fonts/unicode.pf2 ${EFIBOOTDIR}/fonts/
 
 ## This is kinda gross, but then... so's EFI.
 <%def name="make_efiboot(img, include_kernel=False, disk=False, imgtype='default')">
     <%
     kdir = EFIBOOTDIR if include_kernel else KERNELDIR
-    eficonf = "%s/grub.cfg" % (EFIBOOTDIR, )
+    eficonf = "%s/refind.conf" % (EFIBOOTDIR, )
     xenconf = "%s/xen.cfg" % (EFIBOOTDIR, )
     args = "--label=ANACONDA --debug"
     scsi_modules = "3w-9xxx 3w-sas 3w-xxxx BusLogic a100u2w aacraid advansys aic79xx aic7xxx am53c974 arcmsr atp870u bfa bnx2fc csiostor dc395x dmx3191d esas2r esp_scsi fcoe fnic gdth hpsa hptiop hv_storvsc initio ipr ips isci iscsi_boot_sysfs libfc libfcoe libiscsi libosd libsas lpfc megaraid megaraid_mbox megaraid_mm megaraid_sas mpt2sas mpt3sas mvsas mvumi osd pm80xx pmcraid qla1280 qla2xxx qla4xxx raid_class scsi_debug scsi_dh_emc scsi_dh_rdac scsi_transport_fc scsi_transport_iscsi scsi_transport_sas scsi_transport_spi scsi_transport_srp stex sym53c8xx ufshcd virtio_scsi vmw_pvscsi wd719x"
@@ -44,7 +39,7 @@ install boot/efi/EFI/*/fonts/unicode.pf2 ${EFIBOOTDIR}/fonts/
         runcmd chroot ${inroot} dracut --nomdadmconf --nolvmconf --xz --install '/.buildstamp' --add 'anaconda pollcdrom' --omit "network multipath modsign systemd crypt shutdown plymouth fcoe fcoe-uefi nfs iscsi ifcfg" --omit-drivers="${scsi_modules}" --omit-drivers="${extra_modules}" /boot/efi/EFI/qubes/initrd-small.img ${kver}
         install boot/efi/EFI/qubes/initrd-small.img ${EFIBOOTDIR}/initrd.img
     %endif
-    install ${configdir}/grub2-efi.cfg ${eficonf}
+    install ${configdir}/refind.conf ${eficonf}
     install ${configdir}/xen-efi.cfg ${xenconf}
     replace @PRODUCT@ '${product.name}' ${eficonf}
     replace @VERSION@ ${product.version} ${eficonf}

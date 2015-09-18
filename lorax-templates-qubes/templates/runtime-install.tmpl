@@ -34,7 +34,7 @@ installpkg xen-hypervisor
     installpkg efibootmgr grub2-efi shim shim-unsigned
 %endif
 %if basearch in ("i386", "x86_64"):
-    installpkg grub2 grub2-tools shim grub2-efi efibootmgr biosdevname memtest86+ syslinux
+    installpkg grub2 grub2-tools shim refind efibootmgr biosdevname memtest86+ syslinux
 %endif
 %if basearch in ("ppc", "ppc64"):
     installpkg grub2 grub2-tools yaboot fbset hfsutils kernel-bootwrapper ppc64-utils
