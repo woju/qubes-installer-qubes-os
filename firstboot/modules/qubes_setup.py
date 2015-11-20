@@ -102,7 +102,7 @@ class QubesChoice(object):
         for choice in cls.instances:
             if choice.get_selected():
                 for state in choice.states:
-                    yield 'qvm.' + state
+                    yield state
 
 
 class moduleClass(Module):
