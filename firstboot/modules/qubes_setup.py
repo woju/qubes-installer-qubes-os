@@ -92,22 +92,10 @@ class QubesChoice(object):
 
 
     @classmethod
-    def write_config(cls):
-        states = set('qvm.{}'.format(os.path.splitext(name)[0])
-            for name in os.listdir(CONFIG_PATH)
-            if name.startswith('template-' and name.endswith('.sls')))
-#           for template in os.listdir('/var/lib/qubes/vm-templates'):
-
+    def get_states(cls):
         for choice in self.instances:
             if choice.get_state():
-                states.update(choice.states)
-
-        with open(os.path.join(CONFIG_PATH, 'init.top'), 'w') as fh:
-            fh.write(CONFIG_TEMPLATE.format(
-                timestamp=time.strftime('%d.%m.%Y %H:%M:%S'),
-                states='\n'.join(
-                    '{}- {}'.format(' '*8, state) for state in sorted(states))
-                ))
+                yield 'qvm.' + choice.states
 
 
 class moduleClass(Module):
@@ -220,20 +208,21 @@ class moduleClass(Module):
         if self.process_error is not None:
             raise Exception(self.process_error)
 
-
+    def run_command_in_thread(self, *args):
+        self.run_in_thread(self.run_command, args)
 
 
     def configure_qubes(self):
         self.show_stage('Executing qubes configuration')
-        QubesChoice.write_config()
-        self.run_in_thread(
-            self.run_command, (['su', '-c', 'qubesctl', 'state.highstate'],))
+        for state in QubesChoice.get_states():
+            self.run_command_in_thread(['qubesctl', 'top.enable', state,
+                'saltenv=dom0', '-l', 'quiet', '--out', 'quiet'])
+        self.run_command_in_thread(['su', '-c', 'qubesctl', 'state.highstate'])
 
     def configure_default_template(self)
         self.show_stage('Setting default template')
-        self.run_in_thread(self.run_command,
-            (['/usr/bin/qubes-prefs', '--set',
-                'default-template', self.default_template],))
+        self.run_command_in_thread(['/usr/bin/qubes-prefs', '--set',
+                'default-template', self.default_template])
 
     def configure_network(self):
         self.show_stage('Setting up networking')
