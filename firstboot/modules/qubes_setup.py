@@ -76,26 +76,27 @@ class QubesChoice(object):
         self.instances.append(self)
 
 
-    def get_state(self):
+    def get_selected(self):
         return self.widget.get_sensitive() and self.widget.get_active()
 
 
     @classmethod
     def on_check_advanced_toggled(cls, widget):
-        state = not widget.get_active()
+        selected = widget.get_active()
 
         # this works, because you cannot instantiate the choices in wrong order
         # (cls.instances is a list and have deterministic ordering)
         for choice in cls.instances:
-            choice.widget.set_sensitive(state and
-                (choice.depend is None or choice.depend.widget.get_state()))
+            choice.widget.set_sensitive(not selected and
+                (choice.depend is None or choice.depend.widget.get_selected()))
 
 
     @classmethod
     def get_states(cls):
         for choice in self.instances:
-            if choice.get_state():
-                yield 'qvm.' + choice.states
+            if choice.get_selected():
+                for state in choice.states:
+                    yield 'qvm.' + state
 
 
 class moduleClass(Module):
