@@ -327,7 +327,8 @@ class moduleClass(Module):
 
         for choice in QubesChoice.instances:
             self.vbox.pack_start(choice.widget, False, True)
-        self.vbox.pack_start(self.check_advanced, False, True)
+        #self.vbox.pack_start(gtk.HSeparator())
+        self.vbox.pack_end(self.check_advanced, False, True)
 
         self.progress = None
 
