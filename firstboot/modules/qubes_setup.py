@@ -88,7 +88,7 @@ class QubesChoice(object):
         # (cls.instances is a list and have deterministic ordering)
         for choice in cls.instances:
             choice.widget.set_sensitive(not selected and
-                (choice.depend is None or choice.depend.widget.get_selected()))
+                (choice.depend is None or choice.depend.get_selected()))
 
 
     @classmethod
