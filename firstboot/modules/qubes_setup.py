@@ -131,6 +131,7 @@ class moduleClass(Module):
 
             for choice in QubesChoice.instances:
                 choice.widget.set_sensitive(False)
+            self.check_advanced.set_sensitive(False)
             interface.nextButton.set_sensitive(False)
 
             if self.progress is None:
@@ -142,7 +143,7 @@ class moduleClass(Module):
             if testing:
                 return RESULT_SUCCESS
 
-            if self.check_advanced.widget.get_active():
+            if self.check_advanced.get_active():
                 return RESULT_SUCCESS
 
             errors = []
