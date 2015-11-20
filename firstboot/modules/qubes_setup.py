@@ -185,16 +185,16 @@ class moduleClass(Module):
         self.stage = stage
         self.progress.set_text(stage)
 
-    def run_command(self, command, stdin=None):
+    def run_command(self, command):
         try:
             os.setgid(self.qubes_gid)
             os.umask(0007)
-            cmd = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=stdin)
+            cmd = subprocess.Popen(command) #, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, stdin=stdin)
             out = cmd.communicate()[0]
             if cmd.returncode == 0:
                 self.process_error = None
             else:
-                self.process_error = "{} failed:\n{}".format(command, out)
+                self.process_error = "{!r} failed:\n{!r}".format(command, out)
                 raise Exception(self.process_error)
         except Exception as e:
             self.process_error = str(e)
@@ -216,6 +216,8 @@ class moduleClass(Module):
 
     def configure_qubes(self):
         self.show_stage('Executing qubes configuration')
+        states = list(QubesChoice.get_states())
+        sys.stderr.write('states={!r}\n'.format(states))
         for state in QubesChoice.get_states():
             self.run_command_in_thread(['qubesctl', 'top.enable', state,
                 'saltenv=dom0', '-l', 'quiet', '--out', 'quiet'])
