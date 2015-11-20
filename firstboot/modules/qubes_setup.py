@@ -219,7 +219,7 @@ class moduleClass(Module):
         for state in QubesChoice.get_states():
             self.run_command_in_thread(['qubesctl', 'top.enable', state,
                 'saltenv=dom0', '-l', 'quiet', '--out', 'quiet'])
-        self.run_command_in_thread(['su', '-c', 'qubesctl', 'state.highstate'])
+        self.run_command_in_thread(['qubesctl', 'state.highstate'])
 
     def configure_default_template(self):
         self.show_stage('Setting default template')
