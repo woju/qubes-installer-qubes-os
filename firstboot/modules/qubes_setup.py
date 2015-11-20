@@ -128,9 +128,8 @@ class moduleClass(Module):
             else:
                 self.qubes_user = qubes_users[0]
 
-            for widget in self.widgets:
-                widget.set_sensitive(False)
-
+            for choice in QubesChoice.instances:
+                choice.widget.set_sensitive(False)
             interface.nextButton.set_sensitive(False)
 
             if self.progress is None:
@@ -142,16 +141,17 @@ class moduleClass(Module):
             if testing:
                 return RESULT_SUCCESS
 
+            if self.check_advanced.widget.get_active():
+                return RESULT_SUCCESS
+
             errors = []
 
             self.configure_default_template()
             self.configure_qubes()
             self.configure_network()
-            self.configure_default_dvm()
-
 
             try:
-                self.create_default_dvm()
+                self.configure_default_dvm()
             except Exception as e:
                 errors.append((self.stage, str(e)))
 
@@ -173,7 +173,7 @@ class moduleClass(Module):
             self.show_stage("Failure...")
             self.progress.hide()
 
-            self.radio_dontdoanything.set_active(True)
+            self.check_advanced.set_active(True)
             interface.nextButton.set_sensitive(True)
 
             return RESULT_FAILURE
@@ -219,7 +219,7 @@ class moduleClass(Module):
                 'saltenv=dom0', '-l', 'quiet', '--out', 'quiet'])
         self.run_command_in_thread(['su', '-c', 'qubesctl', 'state.highstate'])
 
-    def configure_default_template(self)
+    def configure_default_template(self):
         self.show_stage('Setting default template')
         self.run_command_in_thread(['/usr/bin/qubes-prefs', '--set',
                 'default-template', self.default_template])
@@ -247,7 +247,7 @@ class moduleClass(Module):
         p = subprocess.Popen (["/sbin/lspci", "-mm", "-n"], stdout=subprocess.PIPE)
         result = p.communicate()
         retcode = p.returncode
-        if (retcode != 0):
+        if retcode != 0:
             print "ERROR when executing lspci!"
             raise IOError
 
@@ -264,11 +264,11 @@ class moduleClass(Module):
 
 
     def do_configure_network(self):
-        self.run_command(['/usr/bin/qvm-prefs', '--force-root', '--set', self.fwvm_name, 'netvm', self.netvm_name])
-        self.run_command(['/usr/bin/qubes-prefs', '--set', 'default-netvm', self.fwvm_name])
+        self.run_command(['/usr/bin/qvm-prefs', '--force-root', '--set', 'sys-firewall', 'netvm', 'sys-net'])
+        self.run_command(['/usr/bin/qubes-prefs', '--set', 'default-netvm', 'sys-firewall'])
 
         for dev in self.find_net_devices():
-            self.run_command(['/usr/bin/qvm-pci', '-a', self.netvm_name, dev])
+            self.run_command(['/usr/bin/qvm-pci', '-a', 'sys-net', dev])
 
         self.run_command(['/usr/sbin/service', 'qubes-netvm', 'start'])
 
@@ -288,7 +288,7 @@ class moduleClass(Module):
 
         self.choice_network = QubesChoice(
             _('Create default system qubes (sys-net, sys-firewall)'),
-            ('qvm.sys-net', 'qvm.sys-firewall')))
+            ('qvm.sys-net', 'qvm.sys-firewall'))
 
         self.choice_default = QubesChoice(
             _('Create default application qubes '
@@ -320,10 +320,10 @@ class moduleClass(Module):
     def initializeUI(self):
         self.check_advanced.set_active(False)
 
-        self.choice_network.set_active(True)
-        self.choice_default.set_active(True)
-        self.choice_sys_whonix.set_active(False)
-        self.choice_anon_whonix.set_active(False)
+        self.choice_network.widget.set_active(True)
+        self.choice_default.widget.set_active(True)
+        self.choice_sys_whonix.widget.set_active(False)
+        self.choice_anon_whonix.widget.set_active(False)
 
         self.qubes_gid = grp.getgrnam('qubes').gr_gid
         self.stage = "Initialization"
