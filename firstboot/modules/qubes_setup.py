@@ -93,7 +93,7 @@ class QubesChoice(object):
 
     @classmethod
     def get_states(cls):
-        for choice in self.instances:
+        for choice in cls.instances:
             if choice.get_selected():
                 for state in choice.states:
                     yield 'qvm.' + state
