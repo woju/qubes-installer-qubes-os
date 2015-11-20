@@ -53,28 +53,28 @@ dom0:
 '''
 
 
-def make_toggler(widget, reverse=False):
-    '''Create GTK signal handler, which will toggle sensitiveness based on
-    active state of another widget.'''
-
-    def on_toggle(_widget):
-        widget.set_sensitive(_widget.get_active() ^ reverse)
-
-    return on_toggle
+def is_package_installed(pkgname):
+    return not subprocess.call(['rpm', '-q', pkgname],
+        stdout=open(os.devnull, 'w'), stderr=open(os.devnull, 'w'))
 
 
 class QubesChoice(object):
     instances = []
-    def __init__(self, label, states, depend=None):
+    def __init__(self, label, states, depend=None, extra_check=None):
         self.widget = gtk.CheckButton(label)
         self.states = states
         self.depend = depend
+        self.extra_check = extra_check
         self.selected = None
 
         if self.depend is not None:
-            self.depend.widget.connect('toggled', make_toggler(self.widget))
+            self.depend.widget.connect('toggled', self.friend_on_toggled)
 
         self.instances.append(self)
+
+
+    def friend_on_toggled(self, other_widget):
+        self.set_sensitive(other_widget.get_active())
 
 
     def get_selected(self):
@@ -86,6 +86,11 @@ class QubesChoice(object):
         self.selected = self.get_selected()
 
 
+    def set_sensitive(self, sensitive):
+        self.widget.set_sensitive(sensitive
+            and (self.extra_check is None or self.extra_check()))
+
+
     @classmethod
     def on_check_advanced_toggled(cls, widget):
         selected = widget.get_active()
@@ -93,7 +98,7 @@ class QubesChoice(object):
         # this works, because you cannot instantiate the choices in wrong order
         # (cls.instances is a list and have deterministic ordering)
         for choice in cls.instances:
-            choice.widget.set_sensitive(not selected and
+            choice.set_sensitive(not selected and
                 (choice.depend is None or choice.depend.get_selected()))
 
 
@@ -307,14 +312,13 @@ class moduleClass(Module):
             ('qvm.personal', 'qvm.work', 'qvm.untrusted', 'qvm.vault'),
             depend=self.choice_network)
 
-        self.choice_sys_whonix = QubesChoice(
-            _('Create Whonix Gateway ProxyVM (sys-whonix)'),
-            ('qvm.sys-whonix',))
-
-        self.choice_anon_whonix = QubesChoice(
-            _('Create Whonix Workstation AppVM (anon-whonix)'),
-            ('qvm.anon-whonix',),
-            depend=self.choice_sys_whonix)
+        self.choice_whonix = QubesChoice(
+            _('Create Whonix Gateway and Workstation qubes '
+                '(sys-whonix, anon-whonix)'),
+            ('qvm.sys-whonix', 'qvm.anon-whonix'),
+            depend=self.choice_network,
+            extra_check=lambda: is_package_installed('qubes-template-whonix-gw')
+                and is_package_installed('qubes-template-whonix-ws'))
 
         self.check_advanced = gtk.CheckButton(
             _('Do not configure anything (for advanced users)'))
@@ -333,9 +337,7 @@ class moduleClass(Module):
 
         self.choice_network.widget.set_active(True)
         self.choice_default.widget.set_active(True)
-        self.choice_sys_whonix.widget.set_active(False)
-        self.choice_anon_whonix.widget.set_active(False)
-        self.choice_anon_whonix.widget.set_sensitive(False)
+        self.choice_whonix.widget.set_active(False)
 
         self.qubes_gid = grp.getgrnam('qubes').gr_gid
         self.stage = "Initialization"
