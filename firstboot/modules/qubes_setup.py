@@ -82,7 +82,7 @@ class QubesChoice(object):
 
     @classmethod
     def on_check_advanced_toggled(cls, widget):
-        state = widget.get_active()
+        state = not widget.get_active()
 
         # this works, because you cannot instantiate the choices in wrong order
         # (cls.instances is a list and have deterministic ordering)
@@ -324,6 +324,7 @@ class moduleClass(Module):
         self.choice_default.widget.set_active(True)
         self.choice_sys_whonix.widget.set_active(False)
         self.choice_anon_whonix.widget.set_active(False)
+        self.choice_anon_whonix.widget.set_sensitive(False)
 
         self.qubes_gid = grp.getgrnam('qubes').gr_gid
         self.stage = "Initialization"
