@@ -69,6 +69,7 @@ class QubesChoice(object):
         self.widget = gtk.CheckButton(label)
         self.states = states
         self.depend = depend
+        self.selected = None
 
         if self.depend is not None:
             self.depend.widget.connect('toggled', make_toggler(self.widget))
@@ -77,7 +78,12 @@ class QubesChoice(object):
 
 
     def get_selected(self):
-        return self.widget.get_sensitive() and self.widget.get_active()
+        return self.selected if self.selected is not None \
+            else self.widget.get_sensitive() and self.widget.get_active()
+
+
+    def store_selected(self):
+        self.selected = self.get_selected()
 
 
     @classmethod
@@ -130,6 +136,7 @@ class moduleClass(Module):
                 self.qubes_user = qubes_users[0]
 
             for choice in QubesChoice.instances:
+                choice.store_selected()
                 choice.widget.set_sensitive(False)
             self.check_advanced.set_sensitive(False)
             interface.nextButton.set_sensitive(False)
