@@ -1131,7 +1131,7 @@
   <group>
     <id>debian-8</id>
     <name>Debian 8 (jessie) template</name>
-    <default>false</default>
+    <default>true</default>
     <uservisible>true</uservisible>
     <packagelist>
       <packagereq>qubes-template-debian-8</packagereq>
@@ -1152,6 +1152,9 @@
      <groupid>qubes</groupid>
      <groupid>kde-desktop-qubes</groupid>
     </grouplist>
+    <optionlist>
+     <groupid default='true'>debian-8</groupid>
+    </optionlist>
   </environment>
 
   <environment>
@@ -1170,6 +1173,9 @@
      <groupid>xfce-extra-plugins</groupid>
      <groupid>xfce-media</groupid>
     </grouplist>
+    <optionlist>
+     <groupid default='true'>debian-8</groupid>
+    </optionlist>
   </environment>
   <environment>
    <id>qubes-kde-xfce</id>
@@ -1188,6 +1194,9 @@
      <groupid>xfce-media</groupid>
      <groupid>kde-desktop-qubes</groupid>
     </grouplist>
+    <optionlist>
+     <groupid default='true'>debian-8</groupid>
+    </optionlist>
   </environment>
   <langpacks>
     <match name="kdelibs" install="kde-l10n-%s"/>
