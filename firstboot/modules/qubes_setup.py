@@ -43,7 +43,7 @@ class moduleClass(Module):
         self.title = N_("Create Service VMs")
         self.icon = "qubes.png"
         self.admin = libuser.admin()
-        self.default_template = 'fedora-21'
+        self.default_template = 'fedora-23'
 
     def _showErrorMessage(self, text):
         dlg = gtk.MessageDialog(None, 0, gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, text)
