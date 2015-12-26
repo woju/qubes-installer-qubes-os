@@ -145,11 +145,12 @@ if [ -n "$configdone" ]; then
   exit 0
 fi
 
-# add fedora user with no passwd
-action "Adding live user" useradd $USERADDARGS -c "Live System User" liveuser
-passwd -d liveuser > /dev/null
-usermod -aG wheel liveuser > /dev/null
-usermod -aG qubes liveuser > /dev/null
+# on fresh persistent home, create actual home directory
+if [ ! -d /home/liveuser ]; then
+    mount --bind / /mnt
+    action "Creating user home" cp -a /mnt/home/liveuser /home/liveuser
+    umount /mnt
+fi
 
 # Remove root password lock
 passwd -d root > /dev/null

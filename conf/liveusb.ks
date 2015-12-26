@@ -100,8 +100,12 @@ for tpl in `ls /var/lib/qubes/vm-templates`; do
     esac
 done
 
-# we won't do `useradd qubes`, since his creation depends of persistent home
-# feature; see /etc/rc.d/init.d/livesys
+export PATH=/usr/bin:/usr/sbin
+
+useradd -m -c "Live System User" liveuser
+passwd -d liveuser > /dev/null
+usermod -aG wheel liveuser > /dev/null
+usermod -aG qubes liveuser > /dev/null
 
 qvm-create  --offline-mode --force-root --net --label red sys-net
 qvm-create  --offline-mode --force-root --proxy --label green sys-firewall
