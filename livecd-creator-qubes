@@ -57,7 +57,6 @@ class LiveEFIImageCreator(imgcreate.LiveImageCreator):
             If any of them are missing, return False.
             requires:
               xen.efi
-              gcdx64.efi
               vmlinuz
               initrd
         """
@@ -65,12 +64,9 @@ class LiveEFIImageCreator(imgcreate.LiveImageCreator):
         missing = []
         # XXX: when adding multiple kernel support, vmlinuz and initrd needs to
         #      be suffixed with index
-        files = [("/boot/efi/EFI/*/shim.efi", "/EFI/BOOT/BOOT%s.efi" % (self.efiarch,)),
-                 ("/boot/efi/EFI/*/gcd*.efi", "/EFI/BOOT/grubx64.efi"),
-                 ("/boot/efi/EFI/*/xen-*.efi", "/EFI/BOOT/xen.efi"),
+        files = [("/boot/efi/EFI/*/xen-*.efi", "/EFI/BOOT/BOOT%s.efi" % (self.efiarch,)),
                  ("/boot/efi/EFI/*/vmlinuz", "/EFI/BOOT/vmlinuz"),
                  ("/boot/efi/EFI/*/initrd-small.img", "/EFI/BOOT/initrd"),
-                 ("/boot/efi/EFI/*/fonts/unicode.pf2", "/EFI/BOOT/fonts/"),
                 ]
         makedirs(isodir+"/EFI/BOOT/fonts/")
         for src, dest in files:
@@ -94,42 +90,6 @@ kernel=vmlinuz%(index)s root=%(rootlabel)s %(liveargs)s %(extra)s
 ramdisk=initrd%(index)s
 
 """ %args
-
-
-    def __get_efi_image_stanza(self, **args):
-        return """menuentry '%(long)s' --class qubes --class gnu-linux --class gnu --class os {
-    chainloader /efi/boot/xen.efi placeholder %(name)s%(index)s
-}
-""" %args
-
-    def __get_efi_image_stanzas(self, isodir, name):
-        # FIXME: this only supports one kernel right now...
-
-        kernel_options = self._get_kernel_options()
-        checkisomd5 = self._has_checkisomd5()
-
-        cfg = ""
-
-        for index in range(0, 9):
-            # only one supported anyway, so simply drop the suffix
-            index = ""
-            cfg += self.__get_efi_image_stanza(long = "Start " + self.product,
-                                               index = index, name = "normal")
-            if checkisomd5:
-                cfg += self.__get_efi_image_stanza(
-                                                   long = "Test this media & start " + self.product,
-                                                   index = index, name = "check")
-            cfg += """
-submenu 'Troubleshooting -->' {
-"""
-            cfg += self.__get_efi_image_stanza(long = "Start " + self.product + " in basic graphics mode",
-                                               index = index, name = "basicvideo")
-
-            cfg+= """}
-"""
-            break
-
-        return cfg
 
     def __get_xen_efi_image_stanzas(self, isodir, name):
         # FIXME: this only supports one kernel right now...
@@ -169,32 +129,6 @@ submenu 'Troubleshooting -->' {
 default=normal
 """
 
-    def __get_basic_efi_config(self, **args):
-        return """
-set default="0"
-
-function load_video {
-  insmod efi_gop
-  insmod efi_uga
-  insmod video_bochs
-  insmod video_cirrus
-  insmod all_video
-}
-
-load_video
-set gfxpayload=keep
-insmod gzio
-insmod part_gpt
-insmod ext2
-
-set timeout=%(timeout)d
-### END /etc/grub.d/00_header ###
-
-# do not use 'search' - root should be already set based on grub.efi location
-
-### BEGIN /etc/grub.d/10_linux ###
-""" %args
-
     def _configure_efi_bootloader(self, isodir):
         """Set up the configuration for an EFI bootloader"""
         if self.__copy_efi_files(isodir):
@@ -202,18 +136,10 @@ set timeout=%(timeout)d
             logging.warn("Failed to copy EFI files, no EFI Support will be included.")
             return
 
-        cfg = self.__get_basic_efi_config(isolabel = self.fslabel,
-                                          timeout = self._timeout)
-        cfg += self.__get_efi_image_stanzas(isodir, self.name)
-
         xen_cfg = self.__get_basic_xen_efi_config()
         xen_cfg += self.__get_xen_efi_image_stanzas(isodir, self.name)
 
-        cfgf = open(isodir + "/EFI/BOOT/grub.cfg", "w")
-        cfgf.write(cfg)
-        cfgf.close()
-
-        xen_cfgf = open(isodir + "/EFI/BOOT/xen.cfg", "w")
+        xen_cfgf = open(isodir + "/EFI/BOOT/BOOT%s.cfg" % (self.efiarch,), "w")
         xen_cfgf.write(xen_cfg)
         xen_cfgf.close()
 
@@ -233,11 +159,11 @@ set timeout=%(timeout)d
         #                               ^^^^^^^^^^^^^^^^^^^^ already counted twice
         #        - mkefiboot -a assumes that the loader is grub.efi
         #        - it isn't clear whether xen.efi would even work on Apple
-        subprocess.call(["mkefiboot", "-a", isodir + "/EFI/BOOT",
-                         isodir + "/isolinux/macboot.img", "-l", self.product,
-                         "-n", "/usr/share/pixmaps/bootloader/fedora-media.vol",
-                         "-i", "/usr/share/pixmaps/bootloader/fedora.icns",
-                         "-p", self.product])
+        #subprocess.call(["mkefiboot", "-a", isodir + "/EFI/BOOT",
+        #                 isodir + "/isolinux/macboot.img", "-l", self.product,
+        #                 "-n", "/usr/share/pixmaps/bootloader/fedora-media.vol",
+        #                 "-i", "/usr/share/pixmaps/bootloader/fedora.icns",
+        #                 "-p", self.product])
 
 
 def parse_options(args):
