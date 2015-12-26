@@ -121,6 +121,11 @@ qvm-create  --offline-mode --force-root untrusted --label red
 qvm-create  --offline-mode --force-root `qubes-prefs default-template`-dvm \
         --label gray --internal
 
+qubesctl state.sls config
+qubesctl top.enable qvm.sys-whonix
+qubesctl top.enable qvm.anon-whonix
+qubesctl state.highstate
+
 qubes-set-updates --offline-mode disable
 
 chgrp -R qubes /var/lib/qubes
