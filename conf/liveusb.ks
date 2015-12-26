@@ -82,7 +82,7 @@ echo 'File created by kickstart. See systemd-update-done.service(8).' \
 # setup Qubes
 #
 
-qubes-prefs -s default-template fedora-21
+qubes-prefs -s default-template fedora-23
 
 # TODO: icons?
 for tpl in `ls /var/lib/qubes/vm-templates`; do
