@@ -53,9 +53,11 @@ iso-prepare:
 
 get-sources:
 	$(MAKE) -C refind get-sources
+	$(MAKE) -C livecd-tools get-sources
 
 verify-sources:
 	$(MAKE) -C refind verify-sources
+	$(MAKE) -C livecd-tools verify-sources
 
 iso-installer: iso-prepare
 	mkdir -p work
@@ -83,9 +85,3 @@ clean-repos:
 
 clean:
 	sudo rm -fr build/*
-
-get-sources:
-	$(MAKE) -C livecd-tools get-sources
-
-verify-sources:
-	$(MAKE) -C livecd-tools verify-sources
