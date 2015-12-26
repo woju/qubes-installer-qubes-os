@@ -12,6 +12,7 @@ URL: http://www.rodsbooks.com/refind/
 Group: System Environment/Base
 Source0: http://sourceforge.net/projects/refind/files/0.9.1/refind-src-%version.zip
 BuildRequires: gnu-efi-devel
+BuildRequires: gnu-efi
 #Requires: efibootmgr
 BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
 
