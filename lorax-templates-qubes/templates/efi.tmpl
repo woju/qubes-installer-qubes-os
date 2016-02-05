@@ -7,8 +7,20 @@ APPLE_EFI_DISKNAME=inroot+"/usr/share/pixmaps/bootloader/fedora-media.vol"
 %>
 
 mkdir ${EFIBOOTDIR}
-mkdir ${EFIBOOTDIR}/fonts/
+mkdir ${EFIBOOTDIR}/icons
 install usr/share/refind/refind/refind_${efiarch|lower}.efi ${EFIBOOTDIR}/BOOT${efiarch}.efi
+<%
+icons = ["arrow_left", "arrow_right", "func_exit", "func_reset",
+         "func_shutdown", "os_unknown", "transparent",
+         "vol_external", "vol_internal", "vol_optical"]
+%>
+
+%for icon in icons:
+    install usr/share/refind/refind/icons/${icon}.png ${EFIBOOTDIR}/icons/
+%endfor
+install usr/share/anaconda/boot/syslinux-splash.png ${EFIBOOTDIR}/splash.png
+### XXX FIXME
+install usr/share/plymouth/themes/qubes-dark/qubes-logo-solid.png ${EFIBOOTDIR}/icons/os_qubes.png
 install boot/efi/EFI/*/xen*.efi ${EFIBOOTDIR}/xen.efi
 
 # For Secure Boot restore those files (keep in mind 32MB limit on efiboot.img
