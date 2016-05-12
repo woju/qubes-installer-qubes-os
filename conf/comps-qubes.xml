@@ -1250,6 +1250,17 @@
      <groupid default='true'>whonix</groupid>
     </optionlist>
   </environment>
+
+  <group>
+    <id>awesome</id>
+    <name>Awesome WM (experimental)</name>
+    <default>false</default>
+    <uservisible>true</uservisible>
+    <packagelist>
+      <packagereq>awesome</packagereq>
+    </packagelist>
+  </group>
+
   <langpacks>
     <match name="kdelibs" install="kde-l10n-%s"/>
   </langpacks>
