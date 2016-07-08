@@ -6,9 +6,11 @@
 %packages
 
 gdb
-python-ipython
+haveged
 netplug
+openssh-clients
 openssh-server
+python-ipython
 rpm-build
 rpm-sign
 strace
