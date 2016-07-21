@@ -109,4 +109,4 @@ hardlink ${KERNELDIR}/initrd.img ${BOOTDIR}
 ## treeinfo images-${basearch} boot.iso images/boot.iso
 
 ## make oem.img
-<%include file="oem.tmpl" args="configdir=configdir, BOOTDIR=BOOTDIR, SYSLINUXDIR=SYSLINUXDIR, isolabel=isolabel, product=product, outroot=outroot"/>
+<%include file="oem.tmpl" args="configdir=configdir, BOOTDIR=BOOTDIR, SYSLINUXDIR=SYSLINUXDIR, efiarch=efiarch, isolabel=isolabel, product=product, outroot=outroot"/>
